@@ -23,43 +23,21 @@ meta = MetaData()
 
 def upgrade(migrate_engine):
     meta.bind = migrate_engine
+
     table = Table('instance_types', meta, autoload=True)
-    # NOTE(vish): These constraint names may be dependent on the backend, but
-    #             there doesn't seem to be we a way to determine the proper
-    #             name for existing constraints. These names are correct for
-    #             mysql.
     table.c.name.alter(unique=False)
     table.c.flavorid.alter(unique=False)
-    #cons = UniqueConstraint('name',
-                            #table=table)
-    #cons.drop()
-    #cons = UniqueConstraint('flavorid',
-                            #table=table)
-    #cons.drop()
-    table = Table('volume_types', meta, autoload=True)
-    table.c.volume_types.alter(unique=False)
 
-    #cons = UniqueConstraint('name',
-    #                        table=table)
-    #cons.drop()
+    table = Table('volume_types', meta, autoload=True)
+    table.c.name.alter(unique=False)
 
 
 def downgrade(migrate_engine):
     meta.bind = migrate_engine
+
     table = Table('instance_types', meta, autoload=True)
-    # NOTE(vish): These constraint names may be dependent on the backend, but
-    #             there doesn't seem to be we a way to determine the proper
-    #             name for existing constraints. These names are correct for
-    #             mysql.
-    cons = UniqueConstraint('name',
-                            table=table)
-    cons.create()
-    table = Table('instance_types', meta, autoload=True)
-    cons = UniqueConstraint('flavorid',
-                            name='instance_types_flavorid_str_key',
-                            table=table)
-    cons.create()
+    table.c.name.alter(unique=True)
+    table.c.flavorid.alter(unique=True)
+
     table = Table('volume_types', meta, autoload=True)
-    cons = UniqueConstraint('name',
-                            table=table)
-    cons.create()
+    table.c.name.alter(unique=True)
