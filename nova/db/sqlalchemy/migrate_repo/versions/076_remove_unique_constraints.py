@@ -28,17 +28,20 @@ def upgrade(migrate_engine):
     #             there doesn't seem to be we a way to determine the proper
     #             name for existing constraints. These names are correct for
     #             mysql.
-    cons = UniqueConstraint('name',
-                            table=table)
-    cons.drop()
-    cons = UniqueConstraint('flavorid',
-                            name='instance_types_flavorid_str_key',
-                            table=table)
-    cons.drop()
+    table.c.name.alter(unique=False)
+    table.c.flavorid.alter(unique=False)
+    #cons = UniqueConstraint('name',
+                            #table=table)
+    #cons.drop()
+    #cons = UniqueConstraint('flavorid',
+                            #table=table)
+    #cons.drop()
     table = Table('volume_types', meta, autoload=True)
-    cons = UniqueConstraint('name',
-                            table=table)
-    cons.drop()
+    table.c.volume_types.alter(unique=False)
+
+    #cons = UniqueConstraint('name',
+    #                        table=table)
+    #cons.drop()
 
 
 def downgrade(migrate_engine):
