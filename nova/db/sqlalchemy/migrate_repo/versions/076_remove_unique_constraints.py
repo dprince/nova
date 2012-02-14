@@ -29,7 +29,6 @@ def upgrade(migrate_engine):
     #             name for existing constraints. These names are correct for
     #             mysql.
     cons = UniqueConstraint('name',
-                            name='name',
                             table=table)
     cons.drop()
     cons = UniqueConstraint('flavorid',
@@ -38,7 +37,6 @@ def upgrade(migrate_engine):
     cons.drop()
     table = Table('volume_types', meta, autoload=True)
     cons = UniqueConstraint('name',
-                            name='name',
                             table=table)
     cons.drop()
 
@@ -51,7 +49,6 @@ def downgrade(migrate_engine):
     #             name for existing constraints. These names are correct for
     #             mysql.
     cons = UniqueConstraint('name',
-                            name='name',
                             table=table)
     cons.create()
     table = Table('instance_types', meta, autoload=True)
@@ -61,6 +58,5 @@ def downgrade(migrate_engine):
     cons.create()
     table = Table('volume_types', meta, autoload=True)
     cons = UniqueConstraint('name',
-                            name='name',
                             table=table)
     cons.create()
