@@ -46,8 +46,10 @@ def upgrade(migrate_engine):
         aggregate_hosts.drop_column('host')
         aggregate_hosts.create_column(Column('host', String(255)))
     else:
-        col = aggregate_hosts.c.host
-        UniqueConstraint(col, name='host').drop()
+        ucon = UniqueConstraint('host',
+                                name='aggregate_hosts_host_key',
+                                table=aggregate_hosts)
+        ucon.drop()
 
 
 def downgrade(migrate_engine):
