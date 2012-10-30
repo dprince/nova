@@ -20,9 +20,11 @@
 Handles all requests relating to volumes + cinder.
 """
 
-
-from cinderclient import service_catalog
-from cinderclient.v1 import client as cinder_client
+try:
+    from cinderclient import service_catalog
+    from cinderclient.v1 import client as cinder_client
+except ImportError:
+    pass
 
 from nova.db import base
 from nova import exception
