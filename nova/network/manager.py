@@ -2075,26 +2075,30 @@ class FlatDHCPManager(RPCAllocateFixedIP, FloatingIP, NetworkManager):
         super(FlatDHCPManager, self).init_host()
         self.init_host_floating_ips()
 
-    def _setup_network_on_host(self, context, network):
+    def _setup_network_on_host(self, ctxt, network):
         """Sets up network on this host."""
-        network['dhcp_server'] = self._get_dhcp_ip(context, network)
+        network['dhcp_server'] = self._get_dhcp_ip(ctxt, network)
 
         self.l3driver.initialize_gateway(network)
 
         if not CONF.fake_network:
             dev = self.driver.get_dev(network)
-            self.driver.update_dhcp(context, dev, network)
+            # NOTE(dprince): dhcp DB queries require admin context
+            admin_context = context.get_admin_context()
+            self.driver.update_dhcp(admin_context, dev, network)
             if(CONF.use_ipv6):
-                self.driver.update_ra(context, dev, network)
+                self.driver.update_ra(ctxt, dev, network)
                 gateway = utils.get_my_linklocal(dev)
-                self.db.network_update(context, network['id'],
+                self.db.network_update(ctxt, network['id'],
                                        {'gateway_v6': gateway})
 
-    def _teardown_network_on_host(self, context, network):
+    def _teardown_network_on_host(self, ctxt, network):
         if not CONF.fake_network:
-            network['dhcp_server'] = self._get_dhcp_ip(context, network)
+            network['dhcp_server'] = self._get_dhcp_ip(ctxt, network)
             dev = self.driver.get_dev(network)
-            self.driver.update_dhcp(context, dev, network)
+            # NOTE(dprince): dhcp DB queries require admin context
+            admin_context = context.get_admin_context()
+            self.driver.update_dhcp(admin_context, dev, network)
 
     def _get_network_dict(self, network):
         """Returns the dict representing necessary and meta network fields"""
