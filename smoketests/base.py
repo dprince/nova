@@ -78,7 +78,7 @@ class SmokeTestCase(unittest.TestCase):
             try:
                 #NOTE(dprince): raises exception when instance id disappears
                 instance.update(validate=True)
-            except ValueError:
+            except Exception, e:
                 return True
             time.sleep(wait)
         else:
